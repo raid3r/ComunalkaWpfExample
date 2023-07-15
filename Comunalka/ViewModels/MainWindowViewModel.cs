@@ -19,25 +19,41 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
     {
         AllResourses = new List<CommunalResource>();
         context = new ComunalkaContext();
-        Task.Run(() => { LoadResourses(); }); ;
+        Task.Run(() => { LoadData(); });
     }
 
     private List<CommunalResource> AllResourses;
+    private List<Tariff> AllTariffs;
 
-    private async void LoadResourses()
+    private async void LoadData()
     {
         AllResourses = await context.Resources.ToListAsync();
         OnPropertyChanged(nameof(Resources));
+
+        AllTariffs = await context.Tariffs.ToListAsync();
+        OnPropertyChanged(nameof(Tariffs));
     }
 
-    private CommunalResourseViewModel _selectedResource;
-    public CommunalResourseViewModel SelectedResource
+
+    private CommunalResourseViewModel? _selectedResource;
+    public CommunalResourseViewModel? SelectedResource
     {
         get => _selectedResource;
         set
         {
             _selectedResource = value;
             OnPropertyChanged(nameof(SelectedResource));
+        }
+    }
+
+    private TariffViewModel? _selectedTariff;
+    public TariffViewModel? SelectedTariff
+    {
+        get => _selectedTariff;
+        set
+        {
+            _selectedTariff = value;
+            OnPropertyChanged(nameof(SelectedTariff));
         }
     }
 
@@ -52,21 +68,34 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         }
     }
 
-    public ICommand AddResource => new RelayCommand(x => {
+    public ObservableCollection<TariffViewModel> Tariffs
+    {
+        get
+        {
+            return new ObservableCollection<TariffViewModel>(
+                AllTariffs.Select(r => new TariffViewModel(r))
+                );
+
+        }
+    }
+
+    public ICommand AddResource => new RelayCommand(x =>
+    {
         var resource = new CommunalResource() { Title = "Новий ресурс" };
         AllResourses.Add(resource);
         context.Resources.Add(resource);
-        OnPropertyChanged(nameof(Resources)); 
+        OnPropertyChanged(nameof(Resources));
     }, x => true);
 
-    public ICommand Save => new RelayCommand(x => {
+    public ICommand Save => new RelayCommand(x =>
+    {
         context.SaveChangesAsync().ContinueWith(t =>
         {
             MessageBox.Show("Saved");
-            LoadResourses();
+            LoadData();
             OnPropertyChanged(nameof(Resources));
         });
-    
+
     }, x => true);
 
 }

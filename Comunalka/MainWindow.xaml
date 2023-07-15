@@ -7,32 +7,71 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="70*"></ColumnDefinition>
-            <ColumnDefinition Width="30*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20*"></RowDefinition>
-            <RowDefinition Height="80*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <DataGrid Grid.Row="1" Grid.Column="0" 
+        <TabControl>
+            <TabItem Header="Resources">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70*"></ColumnDefinition>
+                        <ColumnDefinition Width="30*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20*"></RowDefinition>
+                        <RowDefinition Height="80*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="1" Grid.Column="0" 
                   ItemsSource="{Binding Path=Resources}"
                   SelectedItem="{Binding Path=SelectedResource}"
                   IsReadOnly="True" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}"></DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <WrapPanel Margin="5" Grid.Column="1">
-            <Button Margin="5" Command="{Binding Path=Save}">Save</Button>
-            <Button Margin="5" Command="{Binding Path=AddResource}" >New resource</Button>
-        </WrapPanel>
-        <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
-            <TextBlock>Id</TextBlock>
-            <TextBlock Text="{Binding Path=SelectedResource.Id}"></TextBlock>
-            <TextBlock>Title</TextBlock>
-            <TextBox Text="{Binding Path=SelectedResource.Title, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        </StackPanel>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <WrapPanel Margin="5" Grid.Column="1">
+                        <Button Margin="5" Command="{Binding Path=Save}">Save</Button>
+                        <Button Margin="5" Command="{Binding Path=AddResource}" >New resource</Button>
+                    </WrapPanel>
+                    <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
+                        <TextBlock>Id</TextBlock>
+                        <TextBlock Text="{Binding Path=SelectedResource.Id}"></TextBlock>
+                        <TextBlock>Title</TextBlock>
+                        <TextBox Text="{Binding Path=SelectedResource.Title, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tariffs">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70*"></ColumnDefinition>
+                        <ColumnDefinition Width="30*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20*"></RowDefinition>
+                        <RowDefinition Height="80*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="1" Grid.Column="0" 
+                  ItemsSource="{Binding Path=Tariffs}"
+                  SelectedItem="{Binding Path=SelectedTariff}"
+                  IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Price" Binding="{Binding Path=Price}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Resource" Binding="{Binding Path=Resource.Title}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <WrapPanel Margin="5" Grid.Column="1">
+                        <Button Margin="5" Command="{Binding Path=Save}">Save</Button>
+                        <Button Margin="5" Command="{Binding Path=AddTariff}" >New tariff</Button>
+                    </WrapPanel>
+                    <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
+                        <TextBlock>Id</TextBlock>
+                        <TextBlock Text="{Binding Path=SelectedTariff.Id}"></TextBlock>
+                        <TextBlock>Price</TextBlock>
+                        <TextBox Text="{Binding Path=SelectedTariff.Price, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        
     </Grid>
 </Window>

@@ -28,6 +28,17 @@ public class CommunalResourseViewModel : NotifyPropertyChangedBase
         get { return Model.Title; }
         set { Model.Title = value; OnPropertyChanged(nameof(Title)); }
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || !(obj is CommunalResourseViewModel)) return false;
+        return (obj as CommunalResourseViewModel).Model.Id == Model.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return Model.Id.GetHashCode();
+    }
 }
 
 
