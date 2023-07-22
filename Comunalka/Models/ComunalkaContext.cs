@@ -12,6 +12,7 @@ public class ComunalkaContext: DbContext
 
     public virtual DbSet<CommunalResource> Resources { get; set; } = null!;
     public virtual DbSet<Tariff> Tariffs { get; set; } = null!;
+    public virtual DbSet<Counter> Counters { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=SILVERSTONE\\SQLEXPRESS;Initial Catalog=Comunalka;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=False;Trust Server Certificate=False");

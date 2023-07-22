@@ -24,6 +24,7 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
 
     private List<CommunalResource> AllResourses;
     private List<Tariff> AllTariffs;
+    private List<Counter> AllCounters;
 
     private async void LoadData()
     {
@@ -32,6 +33,10 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
 
         AllTariffs = await context.Tariffs.ToListAsync();
         OnPropertyChanged(nameof(Tariffs));
+
+        AllCounters = await context.Counters.ToListAsync();
+        OnPropertyChanged(nameof(Counters));
+
     }
 
 
@@ -57,12 +62,34 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         }
     }
 
+    private CounterViewModel? _selectedCounter;
+    public CounterViewModel? SelectedCounter
+    {
+        get => _selectedCounter;
+        set
+        {
+            _selectedCounter = value;
+            OnPropertyChanged(nameof(SelectedCounter));
+        }
+    }
+
     public ObservableCollection<CommunalResourseViewModel> Resources
     {
         get
         {
             return new ObservableCollection<CommunalResourseViewModel>(
                 AllResourses.Select(r => new CommunalResourseViewModel(r))
+                );
+
+        }
+    }
+
+    public ObservableCollection<CounterViewModel> Counters
+    {
+        get
+        {
+            return new ObservableCollection<CounterViewModel>(
+                AllCounters.Select(c => new CounterViewModel(c))
                 );
 
         }
@@ -85,6 +112,22 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         AllResourses.Add(resource);
         context.Resources.Add(resource);
         OnPropertyChanged(nameof(Resources));
+    }, x => true);
+
+    public ICommand AddTariff => new RelayCommand(x =>
+    {
+        var tariff = new Tariff() { Price = 0, Resource = AllResourses.First() };
+        AllTariffs.Add(tariff);
+        context.Tariffs.Add(tariff);
+        OnPropertyChanged(nameof(Tariffs));
+    }, x => true);
+
+    public ICommand AddCounter => new RelayCommand(x =>
+    {
+        var counter = new Counter() { Number = "", Tariff = AllTariffs.First() };
+        AllCounters.Add(counter);
+        context.Counters.Add(counter);
+        OnPropertyChanged(nameof(Counters));
     }, x => true);
 
     public ICommand Save => new RelayCommand(x =>
