@@ -1,0 +1,26 @@
+﻿<Window x:Class="Comunalka.AddHistory"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Comunalka"
+        mc:Ignorable="d"
+        Title="Add Counter History" Height="450" Width="200" ResizeMode="NoResize">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock>Counter</TextBlock>
+            <TextBlock Text="{Binding Path=Counter.Number}" d:Text="1234"></TextBlock>
+            <TextBlock>Resource</TextBlock>
+            <TextBlock Text="{Binding Path=Counter.Tariff.Resource.Title}" d:Text="Electricity"></TextBlock>
+            <TextBlock>Tariff</TextBlock>
+            <TextBlock Text="{Binding Path=Counter.Tariff.Price}" d:Text="9.99"></TextBlock>
+            <TextBlock>Date</TextBlock>
+            <Calendar SelectedDate="{Binding Path=Date, UpdateSourceTrigger=PropertyChanged}" DisplayDate="{Binding Path=Date, UpdateSourceTrigger=PropertyChanged}"></Calendar>
+            <TextBlock>Value</TextBlock>
+            <TextBox Text="{Binding Path=Value}" d:Text="1234"></TextBox>
+            <StackPanel Margin="20">
+                <Button Click="Button_Click">Save</Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

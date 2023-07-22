@@ -11,4 +11,5 @@ public class Counter
     public int Id { get; set; }
     public string Number { get; set; } = null!;
     public virtual Tariff Tariff { get; set; } = null!;
+    public virtual ICollection<CounterHistory> Histories { get; set; } = new HashSet<CounterHistory>();
 }

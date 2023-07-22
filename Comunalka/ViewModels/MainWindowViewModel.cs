@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using System.Windows.Input;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace Comunalka.ViewModels;
 
@@ -34,7 +36,7 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         AllTariffs = await context.Tariffs.ToListAsync();
         OnPropertyChanged(nameof(Tariffs));
 
-        AllCounters = await context.Counters.ToListAsync();
+        AllCounters = await context.Counters.Include(x => x.Histories).ToListAsync();
         OnPropertyChanged(nameof(Counters));
 
     }
@@ -69,7 +71,8 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         set
         {
             _selectedCounter = value;
-            OnPropertyChanged(nameof(SelectedCounter));
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(MonthStatistic));
         }
     }
 
@@ -84,14 +87,61 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         }
     }
 
+    public SeriesCollection MonthStatistic { get {
+
+            var data = SelectedCounter?.Histories
+                .GroupBy(x => new { Year = x.Date.Year, Month = x.Date.Month })
+                .Select(g => new
+                {
+                    Title = g.Key.Month,
+                    Value = (decimal)(g.ToList().Max(i => i.Value) - g.ToList().Min(i => i.Value))
+                });
+
+            var collection = new SeriesCollection() { 
+            
+            new LineSeries
+            {
+                Values = new ChartValues<decimal>((IEnumerable<decimal>)data?.Select(x => x.Value)),
+                
+            }
+            };
+            return collection;
+        } }
+
     public ObservableCollection<CounterViewModel> Counters
     {
         get
         {
             return new ObservableCollection<CounterViewModel>(
-                AllCounters.Select(c => new CounterViewModel(c))
-                );
+                AllCounters.Select(c =>
+                {
+                    var m = new CounterViewModel(c)
+                    {
+                        
+                    };
+                    m.AddHistory = new RelayCommand(x =>
+                    {
+                        var history = new CounterHistory()
+                        {
+                            Date = DateTime.Now,
+                            Counter = c
+                        };
+                        var viewModel = new CounterHistoryViewModel(history);
 
+                        var window = new AddHistory(viewModel);
+                        if ((bool)window.ShowDialog())
+                        {
+                            context.Histories.Add(history);
+                            c.Histories.Add(history);
+                            OnPropertyChanged(nameof(SelectedCounter.Histories));
+                            m.OnPropertyChanged();
+                            SelectedCounter = m;
+                        };
+
+                    }, x => SelectedCounter != null);
+                    return m;
+                    }
+                ));
         }
     }
 

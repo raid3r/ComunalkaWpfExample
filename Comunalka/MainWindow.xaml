@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Comunalka"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -12,9 +13,8 @@
             <TabItem Header="Resources">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="25*"></ColumnDefinition>
-                        <ColumnDefinition Width="25*"></ColumnDefinition>
-                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="70*"></ColumnDefinition>
+                        <ColumnDefinition Width="30*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20*"></RowDefinition>
@@ -39,15 +39,7 @@
                         <TextBlock>Title</TextBlock>
                         <TextBox Text="{Binding Path=SelectedResource.Title, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     </StackPanel>
-                    <DataGrid Grid.Row="1" Grid.Column="3" 
-                  ItemsSource="{Binding Path=Resources}"
-                  SelectedItem="{Binding Path=SelectedResource}"
-                  IsReadOnly="True" AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"></DataGridTextColumn>
-                            <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}"></DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+
                 </Grid>
             </TabItem>
             <TabItem Header="Tariffs">
@@ -93,7 +85,8 @@
             <TabItem Header="Counters">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70*"></ColumnDefinition>
+                        <ColumnDefinition Width="30*"></ColumnDefinition>
+                        <ColumnDefinition Width="20*"></ColumnDefinition>
                         <ColumnDefinition Width="30*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -105,7 +98,6 @@
                   SelectedItem="{Binding Path=SelectedCounter}"
                   IsReadOnly="True" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Number" Binding="{Binding Path=Number}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Resource" Binding="{Binding Path=Tariff.Resource.Title}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Tariff" Binding="{Binding Path=Tariff.Price}"></DataGridTextColumn>
@@ -114,9 +106,9 @@
                     <WrapPanel Margin="5" Grid.Column="1">
                         <Button Margin="5" Command="{Binding Path=Save}">Save</Button>
                         <Button Margin="5" Command="{Binding Path=AddCounter}" >New counter</Button>
+                        <Button Margin="5" Command="{Binding Path=SelectedCounter.AddHistory}" >New value</Button>
                     </WrapPanel>
                     <StackPanel Margin="5" Grid.Row="1" Grid.Column="1">
-                        <TextBlock>Id</TextBlock>
                         <TextBlock Text="{Binding Path=SelectedCounter.Id}"></TextBlock>
                         <TextBlock>Number</TextBlock>
                         <TextBox Text="{Binding Path=SelectedCounter.Number, UpdateSourceTrigger=PropertyChanged}"></TextBox>
@@ -132,7 +124,43 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        <TextBlock>Begin</TextBlock>
+                        <TextBlock Text="{Binding Path=SelectedCounter.Begin}" d:Text="123"></TextBlock>
+                        <TextBlock>End</TextBlock>
+                        <TextBlock Text="{Binding Path=SelectedCounter.End}" d:Text="456"></TextBlock>
+                        <TextBlock>Total price</TextBlock>
+                        <TextBlock Text="{Binding Path=SelectedCounter.TotalPrice}" d:Text="999.99"></TextBlock>
                     </StackPanel>
+                    <DataGrid Grid.Row="1" Grid.Column="3" 
+                  ItemsSource="{Binding Path=SelectedCounter.Histories}"
+                  IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Path=Date}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Value" Binding="{Binding Path=Value}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Statistic">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"></ColumnDefinition>
+                        <ColumnDefinition Width="70*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="1" Grid.Column="0" 
+                  ItemsSource="{Binding Path=Counters}"
+                  SelectedItem="{Binding Path=SelectedCounter}"
+                  IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Number" Binding="{Binding Path=Number}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Resource" Binding="{Binding Path=Tariff.Resource.Title}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="Tariff" Binding="{Binding Path=Tariff.Price}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <lvc:CartesianChart Series="{Binding MonthStatistic}" Grid.Column="1" />
                 </Grid>
             </TabItem>
         </TabControl>

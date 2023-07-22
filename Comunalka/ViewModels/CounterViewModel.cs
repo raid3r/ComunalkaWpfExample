@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using My.BaseViewModels;
 using Comunalka.Models;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Comunalka.ViewModels;
 
@@ -16,7 +18,22 @@ public class CounterViewModel : NotifyPropertyChangedBase
     {
         Model = model;
         _tariff = new TariffViewModel(model.Tariff);
+        //OnPropertyChanged(nameof(Histories));
     }
+
+    public ObservableCollection<CounterHistoryViewModel> Histories
+    {
+        get
+        {
+            return new ObservableCollection<CounterHistoryViewModel>(
+                Model.Histories.OrderBy(x => x.Date).Select(r => new CounterHistoryViewModel(r))
+                );
+
+        }
+    }
+
+    public ICommand AddHistory { get; set; }
+
 
     public int Id
     {
@@ -33,11 +50,11 @@ public class CounterViewModel : NotifyPropertyChangedBase
     private TariffViewModel _tariff;
     public TariffViewModel Tariff
     {
-        get => _tariff;   
+        get => _tariff;
         set
         {
             _tariff = value;
-            Model.Tariff = value.Model; 
+            Model.Tariff = value.Model;
             OnPropertyChanged();
         }
     }
@@ -51,6 +68,27 @@ public class CounterViewModel : NotifyPropertyChangedBase
     public override int GetHashCode()
     {
         return Model.Id.GetHashCode();
+    }
+
+    public int Begin { get
+        {
+            return Model.Histories.Min(x => x.Value);
+        }
+    }
+
+    public int End
+    {
+        get
+        {
+            return Model.Histories.Max(x => x.Value);
+        }
+    }
+
+    public decimal TotalPrice
+    {
+        get {
+            return (decimal)(End - Begin) * Model.Tariff.Price;
+        }
     }
 }
 
