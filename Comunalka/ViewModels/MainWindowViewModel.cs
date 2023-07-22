@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Windows.Input;
 using LiveCharts;
 using LiveCharts.Wpf;
+using System.Windows.Markup;
 
 namespace Comunalka.ViewModels;
 
@@ -73,6 +74,7 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
             _selectedCounter = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(MonthStatistic));
+            OnPropertyChanged(nameof(MonthStatisticLabels));
         }
     }
 
@@ -87,14 +89,30 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
         }
     }
 
+    public ObservableCollection<string> MonthStatisticLabels
+    {
+        get
+        {
+            var data = SelectedCounter?.Histories
+                .GroupBy(x => new { Year = x.Date.Year, Month = x.Date.Month, Tariff = x.Counter.Tariff })
+                .Select(g => new
+                {
+                    Title = string.Format("{0}.{1}", g.Key.Month, g.Key.Year),
+                    Value = (decimal)(g.ToList().Max(i => i.Value) - g.ToList().Min(i => i.Value)) * g.Key.Tariff.Price
+                });
+
+            return new ObservableCollection<string>(data.Select(x => x.Title));
+        }
+    }
+
     public SeriesCollection MonthStatistic { get {
 
             var data = SelectedCounter?.Histories
-                .GroupBy(x => new { Year = x.Date.Year, Month = x.Date.Month })
+                .GroupBy(x => new { Year = x.Date.Year, Month = x.Date.Month, Tariff = x.Counter.Tariff })
                 .Select(g => new
                 {
                     Title = g.Key.Month,
-                    Value = (decimal)(g.ToList().Max(i => i.Value) - g.ToList().Min(i => i.Value))
+                    Value = (decimal)(g.ToList().Max(i => i.Value) - g.ToList().Min(i => i.Value)) * g.Key.Tariff.Price
                 });
 
             var collection = new SeriesCollection() { 
@@ -102,7 +120,6 @@ public class MainWindowViewModel : NotifyPropertyChangedBase
             new LineSeries
             {
                 Values = new ChartValues<decimal>((IEnumerable<decimal>)data?.Select(x => x.Value)),
-                
             }
             };
             return collection;
